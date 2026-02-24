@@ -1,19 +1,24 @@
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
-import {z} from 'zod'
+import { z } from 'zod'
 
 export async function readUserForCreate() {
+
     // Get infos
     const today = new Date().toISOString().split('T')[0]
+
+    const isIsoDate = (input: string): boolean => z.iso.date().safeParse(input).success
+
+    // Parser deadline
     const parseDeadline = (input: string): string | null => {
         const match = input.toLowerCase().match(/^(\d+)\s*(d|m|y|days?|months?|years?)$/)
         if (!match) return null
 
-        // TODO: Dar um jeito depois de tirar esse te-ignore
-        // @ts-ignore
-        const value = parseInt(match[1])
-        // @ts-ignore
-        const unit = match[2][0]
+        const rawValue = match[1]
+        const rawUnit = match[2]
+        if (!rawValue || !rawUnit) return null
+        const value = Number.parseFloat(rawValue)
+        const unit = rawUnit.charAt(0)
 
         const date = new Date()
         if (unit === 'd') date.setDate(date.getDate() + value)
@@ -24,6 +29,7 @@ export async function readUserForCreate() {
         return date.toISOString().split('T')[0]
     }
 
+   // Start User Interface
     p.intro(pc.cyan('INVOICE CLI - New Project'))
 
     // Inputs
@@ -95,10 +101,9 @@ export async function readUserForCreate() {
                     const input = (value ?? '').trim()
                     if (!input) return
 
-                    const isDate = z.date().safeParse(input.trim()).success
-                    if (isDate) return
+                    if (isIsoDate(input)) return
 
-                    const deadline = parseDeadline(input.trim())
+                    const deadline = parseDeadline(input)
                     if (!deadline) {
                         return 'Invalid format! Use YYYY-MM-DD or shortcuts like "15d", "2m", "1y"'
                     }
@@ -143,10 +148,9 @@ export async function readUserForCreate() {
                     const input = (value ?? '').trim()
                     if (!input) return
 
-                    const isDate = z.date().safeParse(input.trim()).success
-                    if (!isDate) return
+                    if (isIsoDate(input)) return
 
-                    const deadline = parseDeadline(input.trim())
+                    const deadline = parseDeadline(input)
                     if (!deadline) {
                         return 'Invalid format! Use YYYY-MM-DD or shortcuts like "15d", "2m", "1y"'
                     }

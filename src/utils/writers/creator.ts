@@ -4,12 +4,16 @@ import * as p from '@clack/prompts'
 import pc from 'picocolors'
 
 export async function creator() {
-   const data = await readUserForCreate()
+    try {
+        const data = await readUserForCreate()
 
-    // Database
-    initDB()
+        // Database
+        initDB()
 
-    saveProject(data)
+        saveProject(data)
 
-    p.outro(pc.green('Project completed successfully!'))
+        p.outro(pc.green('Project completed successfully!'))
+    } catch (err) {
+        console.error(`ERROR: ${err}`)
+    }
 }
