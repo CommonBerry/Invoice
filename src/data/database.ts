@@ -1,4 +1,5 @@
 import { Database } from "bun:sqlite"
+import type { saveProjectInterface } from "../types/projects.ts";
 
 // Resolver path
 const db = new Database("data/projects.sqlite", { create: true })
@@ -36,21 +37,7 @@ export const initDB = () => {
     `)
 }
 
-export const saveProject = (project: {
-    budget: number;
-    projectStarted: Exclude<Awaited<boolean | symbol>, symbol>;
-    deliveryForecast: string;
-    startDate: Exclude<Awaited<string | symbol>, symbol>;
-    clientEmail: Exclude<Awaited<string | symbol>, symbol>;
-    clientName: Exclude<Awaited<string | symbol>, symbol>;
-    contactBudget: number;
-    chargeType: Exclude<Awaited<symbol | string>, symbol>;
-    description: Exclude<Awaited<string | symbol>, symbol>;
-    isInitialPay: number;
-    expectedPayDate: string;
-    clientCompany: Exclude<Awaited<string | symbol>, symbol>;
-    name: Exclude<Awaited<string | symbol>, symbol>
-}) => {
+export const saveProject = (project: saveProjectInterface) => {
     const query = db.prepare(`
         INSERT INTO projects (
             name, description, charge_type, client_name, client_email,

@@ -1,4 +1,5 @@
-import { Command } from "commander";
+import { Command } from "commander"
+import { creator } from "../utils/writers/creator"
 
 export function cli(): void {
     const program = new Command()
@@ -11,8 +12,8 @@ export function cli(): void {
     program
         .command("new")
         .description("Create new project")
-        .action((): void => {
-            console.log("New project here")
+        .action(async () => {
+            await creator()
         })
 
     program.parse()
