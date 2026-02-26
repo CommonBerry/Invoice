@@ -1,8 +1,10 @@
 import { Database } from "bun:sqlite"
+import { join } from "node:path"
 import type { saveProjectInterface } from "../types/projects.ts";
 
 // Resolver path
-const db = new Database("data/projects.sqlite", { create: true })
+const DB_PATH = join(process.cwd(), "data", "database.sqlite");
+const db = new Database(DB_PATH, { create: true })
 
 /**
  * # Initialize tables if they do not exist
@@ -31,6 +33,7 @@ export const initDB = () => {
             expected_pay_date TEXT,
             
             project_started INTEGER DEFAULT 0,
+            project_completed INTEGER DEFAULT 0,
             
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
@@ -42,11 +45,11 @@ export const saveProject = (project: saveProjectInterface) => {
         INSERT INTO projects (
             name, description, charge_type, client_name, client_email,
             client_company, start_date, delivery_forecast, budget, contact_budget,
-            initial_pay, expected_pay_date, project_started
+            initial_pay, expected_pay_date, project_started, project_completed
         ) VALUES (
             $name, $description, $chargeType, $clientName, $clientEmail,
             $clientCompany, $startDate, $deliveryForecast, $budget, $contactBudget,
-            $isInitialPay, $expectedPayDate, $projectStarted
+            $isInitialPay, $expectedPayDate, $projectStarted, $projectCompleted
         )
     `)
 
@@ -64,6 +67,7 @@ export const saveProject = (project: saveProjectInterface) => {
         $isInitialPay: project.isInitialPay,
         $expectedPayDate: project.expectedPayDate,
         $projectStarted: project.projectStarted ? 1 : 0,
+        $projectCompleted: project.projectCompleted ? 1 : 0,
     })
 }
 

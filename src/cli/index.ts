@@ -55,6 +55,8 @@ export function cli(): void {
             }
         })
 
+    // TODO: Criar argumento para atualisar o status de um projeto, funcoes ja prontas no readUser.ts e editor.ts
+
 
     program.parse()
 }

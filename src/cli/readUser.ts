@@ -71,7 +71,7 @@ export async function readUserForCreate() {
                 validate: value => {
                     const result = z.email().safeParse(value)
                     if (!result.success) {
-                        return 'Invalid email syntax!'
+                            return 'Invalid email syntax!'
                     }
                 }
             }),
@@ -79,7 +79,7 @@ export async function readUserForCreate() {
             clientCompany: () => p.text({
                 message: 'Customer company:',
                 placeholder: '(Optional) The Linux Foundation',
-                defaultValue: ''
+                defaultValue: undefined
             }),
 
             startDate: () => p.text({
@@ -96,7 +96,7 @@ export async function readUserForCreate() {
 
             deliveryForecast: () => p.text({
                 message: 'Delivery forecast:',
-                placeholder: 'Use 20d ou YYYY-MM-DD',
+                placeholder: 'Use 20d (after today) ou YYYY-MM-DD',
                 validate: value => {
                     const input = (value ?? '').trim()
                     if (!input) return
@@ -143,7 +143,7 @@ export async function readUserForCreate() {
 
             expectedPayDate: () => p.text({
                 message: 'Pay date forecast:',
-                placeholder: '20d or YYYY-MM-DD',
+                placeholder: '20d (after today) or YYYY-MM-DD',
                 validate: value => {
                     const input = (value ?? '').trim()
                     if (!input) return
@@ -175,5 +175,21 @@ export async function readUserForCreate() {
     }
 }
 
+export async function readUserForUpdateCompleted(currentStatus: boolean): Promise<{project_completed: boolean}> {
+    p.intro(pc.cyan('INVOICE CLI - Complete project'))
+
+    const toggleCompleted: boolean | symbol = await p.confirm({
+        message: `Project is currently ${currentStatus ? 'completed' : 'not completed'}. Toggle status?`,
+        initialValue: !currentStatus
+    })
+
+    if (p.isCancel(toggleCompleted)) {
+        p.cancel('Operation canceled')
+        process.exit(0)
+    }
+
+    return { project_completed: toggleCompleted }
+}
+
 // Dev test
-// await readUserForCreate()
+//  console.log(await readUserForUpdateCompleted(true))

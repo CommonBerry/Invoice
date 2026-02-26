@@ -1,6 +1,7 @@
 import { data } from "../../data/readRaw"
+import type {Project} from "../../types/projects.ts";
 
-export async function getProjectById (id: number) {
+export async function getProjectById (id: number): Promise<Project | null | undefined> {
     try {
         const project = await data()
         const getProject = project.find((p) => p.id === id)
@@ -10,7 +11,7 @@ export async function getProjectById (id: number) {
     }
 }
 
-export async function getProjectByName (name: string) {
+export async function getProjectByName (name: string): Promise<Project | null | undefined> {
     try {
         const project = await data()
         const getProject = project.find((p) => p.name === name)

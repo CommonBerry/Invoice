@@ -20,12 +20,14 @@ export interface Project {
     expected_pay_date?: string;
 
     project_started: numBol;
+    projectCompleted: numBol;
     created_at: string;
 }
 
 export interface saveProjectInterface {
     budget: number;
     projectStarted: Exclude<Awaited<boolean | symbol>, symbol>;
+    projectCompleted: Exclude<Awaited<boolean | symbol>, symbol>;
     deliveryForecast: string;
     startDate: Exclude<Awaited<string | symbol>, symbol>;
     clientEmail: Exclude<Awaited<string | symbol>, symbol>;
