@@ -46,7 +46,7 @@ export async function readUserForCreate() {
             description: () => p.text({
                 message: 'Project description:',
                 placeholder: 'API for a mobile delivery app',
-                defaultValue: '',
+                defaultValue: 'No description',
             }),
 
             chargeType: () => p.select({
@@ -79,7 +79,7 @@ export async function readUserForCreate() {
             clientCompany: () => p.text({
                 message: 'Customer company:',
                 placeholder: '(Optional) The Linux Foundation',
-                defaultValue: undefined
+                defaultValue: 'No company'
             }),
 
             startDate: () => p.text({
