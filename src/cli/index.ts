@@ -2,6 +2,8 @@ import { Command } from "commander"
 import { creator } from "../utils/writers/creator"
 import { readAll } from "../utils/readers/readAll"
 import { getProjectById, getProjectByName } from "../utils/readers/finder"
+import {readUserForUpdateCompleted} from "./readUser.ts";
+import {updaterCompleted} from "../utils/writers/editor.ts"
 
 export function cli(): void {
     const program = new Command()
@@ -55,7 +57,23 @@ export function cli(): void {
             }
         })
 
-    // TODO: Criar argumento para atualisar o status de um projeto, funcoes ja prontas no readUser.ts e editor.ts
+    program
+        .command("update")
+        .description("Update the project by ID")
+        .option("-i --id <number>", "Get project by ID")
+        .action(async (option) => {
+            const projectId = Number(option.id)
+            const project = await getProjectById(projectId)
+            if (project) {
+                const currenStatus = !!project?.projectCompleted
+                const newState = await readUserForUpdateCompleted(currenStatus)
+                updaterCompleted(option.id, newState)
+            } else {
+                console.error("Project not found")
+            }
+
+        })
+
 
 
     program.parse()

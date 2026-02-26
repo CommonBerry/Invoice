@@ -175,12 +175,12 @@ export async function readUserForCreate() {
     }
 }
 
-export async function readUserForUpdateCompleted(currentStatus: boolean): Promise<{project_completed: boolean}> {
+export async function readUserForUpdateCompleted(currentStatus: boolean): Promise<boolean> {
     p.intro(pc.cyan('INVOICE CLI - Complete project'))
 
     const toggleCompleted: boolean | symbol = await p.confirm({
-        message: `Project is currently ${currentStatus ? 'completed' : 'not completed'}. Toggle status?`,
-        initialValue: !currentStatus
+        message: `Project is currently ${currentStatus ? 'completed' : 'NOT completed'}. Toggle Status`,
+        initialValue: !currentStatus,
     })
 
     if (p.isCancel(toggleCompleted)) {
@@ -188,7 +188,12 @@ export async function readUserForUpdateCompleted(currentStatus: boolean): Promis
         process.exit(0)
     }
 
-    return { project_completed: toggleCompleted }
+    // if/else CLASSICO pra evirar erro
+    if (toggleCompleted) {
+        return !currentStatus
+    } else {
+        return currentStatus
+    }
 }
 
 // Dev test

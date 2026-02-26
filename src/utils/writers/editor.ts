@@ -3,7 +3,7 @@ import db from "../../data/database"
 export function updaterCompleted(id: number, completed: boolean): void {
     const query = db.prepare(`
         UPDATE projects
-        set project_completed = $completed
+        set projectCompleted = $completed
         WHERE id = $id
     `)
 

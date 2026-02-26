@@ -18,24 +18,24 @@ export const initDB = () => {
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             description TEXT,
-            charge_type TEXT,
+            chargeType TEXT,
             
-            client_name TEXT,
-            client_email TEXT,
-            client_company TEXT,
+            clientName TEXT,
+            clientEmail TEXT,
+            clientCompany TEXT,
             
-            start_date TEXT,
-            delivery_forecast TEXT,
+            startDate TEXT,
+            deliveryForecast TEXT,
             
             budget REAL,
-            contact_budget REAL,
-            initial_pay REAL,
-            expected_pay_date TEXT,
+            contactBudget REAL,
+            initialPay REAL,
+            expectedPayDate TEXT,
             
-            project_started INTEGER DEFAULT 0,
-            project_completed INTEGER DEFAULT 0,
+            projectStarted INTEGER DEFAULT 0,
+            projectCompleted INTEGER DEFAULT 0,
             
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            createdAt TEXT DEFAULT CURRENT_TIMESTAMP
         )
     `)
 }
@@ -43,9 +43,9 @@ export const initDB = () => {
 export const saveProject = (project: saveProjectInterface) => {
     const query = db.prepare(`
         INSERT INTO projects (
-            name, description, charge_type, client_name, client_email,
-            client_company, start_date, delivery_forecast, budget, contact_budget,
-            initial_pay, expected_pay_date, project_started, project_completed
+            name, description, chargeType, clientName, clientEmail,
+            clientCompany, startDate, deliveryForecast, budget, contactBudget,
+            initialPay, expectedPayDate, projectStarted, projectCompleted
         ) VALUES (
             $name, $description, $chargeType, $clientName, $clientEmail,
             $clientCompany, $startDate, $deliveryForecast, $budget, $contactBudget,
