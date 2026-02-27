@@ -5,7 +5,7 @@ import { getProjectById, getProjectByName } from "../utils/readers/finder"
 import {readUserForUpdateCompleted, readUserForStart} from "./readUser.ts";
 import {updaterCompleted, updaterStarted} from "../utils/writers/editor.ts"
 import type {Project} from "../types/projects.ts";
-import {getProjectsByCompleted, getProjectsByStarted} from "../utils/readers/filter.ts";
+import {getProjectsByCompleted, getProjectsByStarted} from "../utils/readers/filters.ts";
 
 export function cli(): void {
     const program = new Command()
@@ -94,6 +94,7 @@ export function cli(): void {
         })
 
 
+    // TODO: Usar cli table3 aqui tbm
     program
         .command("filter")
         .description("Filter projects by condition")

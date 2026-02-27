@@ -5,7 +5,7 @@ import type {Project} from "../../types/projects.ts";
 const project = await data()
 
 
-// Por enquanto fica com .filter() msm, depois usar uma forma melhor pelo SQLite
+// TODO: Por enquanto fica com .filter() msm, depois usar uma forma melhor pelo SQLite
 
 export function getProjectsByCompleted(): Project[] | null {
     try {
