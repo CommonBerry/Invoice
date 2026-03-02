@@ -9,9 +9,9 @@
 Invoice is a modern CLI freelance project manager designed to be fast, efficient, and non-distracting.
 
 ## Features
-- Create and manaje projects
+- Create and manage projects
 - Track budgets and payments
-- Don't forget your devilery dates
+- Don't forget your delivery dates
 - [WIP] Beautiful TUI dashboard to manage your projects
 
 ## Instalation
