@@ -2,9 +2,23 @@ import Papa from "papaparse";
 
 import { getProjectById } from "../readers/finder";
 import { data } from "../../data/readRaw";
+import { genericConfirm } from "../../cli/readUser";
+import pc from "picocolors";
 
 export async function exportCSVById(id: number, path: string) {
   try {
+    const isExist = Bun.file(path);
+    if (await isExist.exists()) {
+      const userReq = await genericConfirm(
+        `File ${path} already exists. Overwrite?`,
+        false,
+      );
+      if (!userReq) {
+        console.warn(pc.red("Operation canceled."));
+        process.exit(0);
+      }
+    }
+
     const project = await getProjectById(id);
 
     if (!project) {
@@ -44,6 +58,18 @@ export async function exportCSVById(id: number, path: string) {
 
 export async function exportAllCSV(path: string) {
   try {
+    const isExist = Bun.file(path);
+    if (await isExist.exists()) {
+      const userReq = await genericConfirm(
+        `File ${path} already exists. Overwrite?`,
+        false,
+      );
+      if (!userReq) {
+        console.warn(pc.red("Operation canceled."));
+        process.exit(0);
+      }
+    }
+
     const projetcs = await data();
 
     if (projetcs.length <= 0) {

@@ -66,6 +66,12 @@ export function cli(): void {
           console.error("Project not found");
         }
       }
+
+      if (Object.keys(options).length === 0) {
+        console.warn(
+          pc.yellow("Please provide either --id <number> or --name flag."),
+        );
+      }
     });
 
   program
@@ -83,6 +89,9 @@ export function cli(): void {
         updaterStarted(projectID, newState);
       } else {
         console.error("Project not found");
+      }
+      if (Object.keys(options).length === 0) {
+        console.warn(pc.yellow("Please provide either --id <number> flag."));
       }
     });
 
@@ -102,6 +111,9 @@ export function cli(): void {
       } else {
         console.error("Project not found");
       }
+      if (Object.keys(option).length === 0) {
+        console.warn(pc.yellow("Please provide either --id <number> flag."));
+      }
     });
 
   // TODO: Usar cli table3 aqui tbm
@@ -118,6 +130,12 @@ export function cli(): void {
       if (options.completed) {
         console.table(getProjectsByCompleted(), ["id", "name", "description"]);
       }
+
+      if (Object.keys(options).length === 0) {
+        console.warn(
+          pc.yellow("Please provide either --started or --completed flag."),
+        );
+      }
     });
 
   program
@@ -128,6 +146,10 @@ export function cli(): void {
       if (options.id) {
         const projectID = Number(options.id);
         await deleteProject(projectID);
+      }
+
+      if (Object.keys(options).length === 0) {
+        console.warn(pc.yellow("Please provide either --id <number> flag."));
       }
     });
 
@@ -147,6 +169,12 @@ export function cli(): void {
       if (options.all) {
         await exportAllCSV(path);
         console.log(pc.green(`All projects were exported to ${path}`));
+      }
+
+      if (!options.id && !options.all) {
+        console.warn(
+          pc.yellow("Please provide either --id <number> or --all flag."),
+        );
       }
     });
 

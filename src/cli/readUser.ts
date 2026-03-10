@@ -147,6 +147,7 @@ export async function readUserForCreate() {
       budget: () =>
         p.text({
           message: "What is the total budget?",
+          placeholder: "Simple number. Ex: 1200",
           validate: (value) => {
             if (isNaN(Number(value))) return "Enter a valid number!";
           },
@@ -155,6 +156,7 @@ export async function readUserForCreate() {
       contactBudget: () =>
         p.text({
           message: "What is the total value of the contract?",
+          placeholder: "Simple number. Ex: 1200",
           validate: (value) => {
             if (isNaN(Number(value))) return "Enter a valid number!";
           },
@@ -193,7 +195,7 @@ export async function readUserForCreate() {
     },
     {
       onCancel: () => {
-        p.cancel("Operation canceled");
+        p.cancel("Operation canceled.");
         process.exit(0);
       },
     },
@@ -226,7 +228,7 @@ export async function readUserForUpdateCompleted(
   });
 
   if (p.isCancel(toggleCompleted)) {
-    p.cancel("Operation canceled");
+    p.cancel("Operation canceled.");
     process.exit(0);
   }
 
@@ -253,9 +255,26 @@ export async function readUserForStart(
   });
 
   if (p.isCancel(toggleStarted)) {
-    p.cancel("Operation canceled");
+    p.cancel("Operation canceled.");
     process.exit(0);
   }
 
   return toggleStarted ? !currentStatus : currentStatus;
+}
+
+export async function genericConfirm(
+  text: string,
+  iniVal: boolean,
+): Promise<boolean> {
+  const result: boolean | symbol = await p.confirm({
+    message: pc.bold(pc.yellow(text)),
+    initialValue: iniVal,
+  });
+
+  if (p.isCancel(result)) {
+    p.cancel("Operation canceled.");
+    process.exit(0);
+  }
+
+  return result;
 }
