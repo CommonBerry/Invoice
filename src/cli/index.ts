@@ -27,7 +27,7 @@ export function cli(): void {
   program
     .name("Invoice")
     .description("Manage your freelance projects elegantly")
-    .version("1.0.0");
+    .version("1.0.1");
 
   program
     .command("setup")
