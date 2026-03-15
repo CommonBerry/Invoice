@@ -1,3 +1,4 @@
+import type { Project } from "../types/projects";
 import db from "./database";
 
 export function updaterCompleted(id: number, completed: boolean): void {
@@ -25,3 +26,13 @@ export function updaterStarted(id: number, started: boolean): void {
     $started: started ? 1 : 0,
   });
 }
+
+export const updateProject = (id: number, fields: Partial<Project>) => {
+  const keys = Object.keys(fields);
+  const values = Object.values(fields);
+
+  const setClause = keys.map((k) => `${k} = ?`).join(", ");
+  const query = `UPDATE projects SET ${setClause} WHERE id = ?`;
+
+  db.run(query, [...values, id]);
+};

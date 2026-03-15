@@ -2,7 +2,11 @@ import { Command } from "commander";
 import { creator } from "../utils/writers/creator";
 import { readAll } from "../utils/readers/readAll";
 import { getProjectById, getProjectByName } from "../utils/readers/finder";
-import { readUserForUpdateCompleted, readUserForStart } from "./readUser.ts";
+import {
+  readUserForUpdateCompleted,
+  readUserForStart,
+  readUserForEdit,
+} from "./readUser.ts";
 import { updaterCompleted, updaterStarted } from "../data/editor.ts";
 import type { Project } from "../types/projects.ts";
 import { deleteProject } from "../utils/writers/deleter.ts";
@@ -12,7 +16,9 @@ import {
 } from "../utils/readers/filters.ts";
 import { exportCSVById, exportAllCSV } from "../utils/exporters/csv.ts";
 import { setup } from "../utils/writers/setup.ts";
+import { updateProject } from "../data/editor.ts";
 import pc from "picocolors";
+import { outro } from "@clack/prompts";
 
 export function cli(): void {
   const program = new Command();
@@ -133,7 +139,6 @@ export function cli(): void {
         await getProjectById(projectID);
       if (project) {
         const currenStatus: boolean = !!project?.projectStarted;
-        console.log(currenStatus);
         const newState: boolean = await readUserForStart(currenStatus);
         updaterStarted(projectID, newState);
       } else {
@@ -162,6 +167,23 @@ export function cli(): void {
       }
       if (Object.keys(option).length === 0) {
         console.warn(pc.yellow("Please provide either --id <number> flag."));
+      }
+    });
+
+  program
+    .command("edit")
+    .description("Edit project information by id")
+    .option("-i --id <number>", "Get project by ID")
+    .action(async (option) => {
+      try {
+        const projectId: number = Number(option.id);
+        const newData = await readUserForEdit();
+        const { data, value } = newData;
+
+        updateProject(projectId, { [data]: value });
+        outro(pc.green("Project updated successfully!"));
+      } catch (error) {
+        console.error("Something went wrong");
       }
     });
 

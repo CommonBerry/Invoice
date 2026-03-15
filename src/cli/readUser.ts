@@ -39,10 +39,9 @@ export async function readUserForInit() {
   return data;
 }
 
-export async function readUserForCreate() {
-  // Get infos
-  const today = new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split("T")[0];
 
+export async function readUserForCreate() {
   const isIsoDate = (input: string): boolean =>
     z.iso.date().safeParse(input).success;
 
@@ -314,4 +313,145 @@ export async function genericConfirm(
   }
 
   return result;
+}
+
+const readUserForEditChargeType = async () => {
+  const data = await p.select({
+    message: "Type of charge:",
+    options: [
+      { value: "fixed", label: "Fixed value" },
+      { value: "perHour", label: "Per hour" },
+    ],
+  });
+  if (p.isCancel(data)) {
+    p.cancel("Operation canceled.");
+    process.exit(0);
+  }
+  return data;
+};
+
+const readUserForEditEmail = async () => {
+  const data = await p.text({
+    message: "Customer email:",
+    placeholder: "Ex: tuxthepenguim@example.com",
+    validate: (value) => {
+      const result = z.email().safeParse(value);
+      if (!result.success) {
+        return "Invalid email syntax!";
+      }
+    },
+  });
+  if (p.isCancel(data)) {
+    p.cancel("Operation canceled.");
+    process.exit(0);
+  }
+  return data;
+};
+
+const readUserForEditDate = async (title: string) => {
+  const data = await p.text({
+    message: title,
+    placeholder: today,
+    defaultValue: today,
+    validate: (value) => {
+      const result = z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .safeParse(value?.trim());
+      if (!result.success) {
+        return "Invalid format! Use YYYY-MM-DD (ex: 2026-02-23)";
+      }
+    },
+  });
+
+  if (p.isCancel(data)) {
+    p.cancel("Operation canceled.");
+    process.exit(0);
+  }
+  return data;
+};
+
+const readUserForEditNumber = async (title: string) => {
+  const data = await p.text({
+    message: title,
+    placeholder: "Simple number. Ex: 1200",
+    validate: (value) => {
+      if (isNaN(Number(value))) return "Enter a valid number!";
+    },
+  });
+
+  if (p.isCancel(data)) {
+    p.cancel("Operation canceled.");
+    process.exit(0);
+  }
+
+  return data;
+};
+
+export async function readUserForEdit() {
+  p.intro(pc.cyan("INVOICE CLI - Edit project"));
+  const data = await p.select({
+    message: "Select the option to edit",
+    options: [
+      { value: "name", label: "Name" },
+      { value: "description", label: "Description" },
+      { value: "chargeType", label: "Charge Type" },
+      { value: "clientName", label: "Client Name" },
+      { value: "clientEmail", label: "Client Email" },
+      { value: "clientCompany", label: "Client Company" },
+      { value: "startDate", label: "Start Date" },
+      { value: "deliveryForecast", label: "Delivery Forecast" },
+      { value: "budget", label: "Budget" },
+      { value: "contactBudget", label: "Contact Budget" },
+      { value: "initialPay", label: "Initial Pay" },
+      { value: "expectedPayDate", label: "Expected Pay Date" },
+    ],
+  });
+
+  if (p.isCancel(data)) {
+    p.cancel("Operation canceled.");
+    process.exit(0);
+  }
+
+  let value = null;
+
+  if (data === "chargeType") {
+    value = await readUserForEditChargeType();
+  } else if (data === "clientEmail") {
+    value = await readUserForEditEmail();
+  } else if (data === "startDate") {
+    value = await readUserForEditDate("Start date (YYYY-MM-DD)");
+  } else if (data === "deliveryForecast") {
+    value = await readUserForEditDate("Delivery forecast");
+  } else if (data === "budget") {
+    value = await readUserForEditNumber("What is the total budget?");
+  } else if (data === "contactBudget") {
+    value = await readUserForEditNumber(
+      "What is the total value of the contract?",
+    );
+  } else if (data === "initialPay") {
+    value = await readUserForEditNumber(
+      "Has there already been an initial payment?",
+    );
+  } else if (data === "expectedPayDate") {
+    value = await readUserForEditDate("Pay date forecast:");
+  } else {
+    value = await p.text({
+      message: "New value:",
+      validate: (value) => {
+        if (!value)
+          return "The new value is required (type ctrl + c to cancel)";
+      },
+    });
+
+    if (p.isCancel(value)) {
+      p.cancel("Operation canceled.");
+      process.exit(0);
+    }
+  }
+
+  return {
+    data,
+    value,
+  };
 }
