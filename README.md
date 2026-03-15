@@ -33,7 +33,7 @@ Currently, Invoice can be installed by cloning the repository and running the in
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/invoice.git
+git clone https://github.com/Henriquehnnm/invoice.git
 
 # Navigate to the project directory
 cd invoice
