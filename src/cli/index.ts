@@ -89,6 +89,15 @@ export function cli(): void {
     .option("-n --name <name>", "Get project by name")
     .option("-j, --json", "Return json output")
     .action(async (options): Promise<void> => {
+      if (Object.keys(options).length === 0) {
+        console.warn(
+          pc.yellow(
+            "Please provide either --id <number> or --name <name> flag.",
+          ),
+        );
+        process.exit(1);
+      }
+
       // By name
       if (options.name) {
         const project: Project | null | undefined = await getProjectByName(
@@ -122,12 +131,6 @@ export function cli(): void {
           console.error("Project not found");
         }
       }
-
-      if (Object.keys(options).length === 0) {
-        console.warn(
-          pc.yellow("Please provide either --id <number> or --name flag."),
-        );
-      }
     });
 
   program
@@ -135,6 +138,11 @@ export function cli(): void {
     .description("Start existent project")
     .option("-i --id <number>", "Get project by ID")
     .action(async (options): Promise<void> => {
+      if (Object.keys(options).length === 0) {
+        console.warn(pc.yellow("Please provide either --id <number> flag."));
+        process.exit(1);
+      }
+
       const projectID: number = Number(options.id);
       const project: Project | null | undefined =
         await getProjectById(projectID);
@@ -145,9 +153,6 @@ export function cli(): void {
       } else {
         console.error("Project not found");
       }
-      if (Object.keys(options).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
-      }
     });
 
   program
@@ -155,6 +160,10 @@ export function cli(): void {
     .description("Complete existent project")
     .option("-i --id <number>", "Get project by ID")
     .action(async (option): Promise<void> => {
+      if (Object.keys(option).length === 0) {
+        console.warn(pc.yellow("Please provide either --id <number> flag."));
+        process.exit(1);
+      }
       const projectId: number = Number(option.id);
       const project: Project | null | undefined =
         await getProjectById(projectId);
@@ -165,9 +174,6 @@ export function cli(): void {
         updaterCompleted(projectId, newState);
       } else {
         console.error("Project not found");
-      }
-      if (Object.keys(option).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
       }
     });
 
@@ -200,6 +206,12 @@ export function cli(): void {
     .option("-c --completed", "Filter completed projects")
     .option("-j, --json", "Return json output")
     .action(async (options): Promise<void> => {
+      if (Object.keys(options).length === 0) {
+        console.warn(
+          pc.yellow("Please provide either --started or --completed flag."),
+          process.exit(1),
+        );
+      }
       const Table = require("cli-table3");
       const table = new Table({
         head: ["id", "name", "description"],
@@ -240,12 +252,6 @@ export function cli(): void {
           console.error("No projects found!");
         }
       }
-
-      if (Object.keys(options).length === 0) {
-        console.warn(
-          pc.yellow("Please provide either --started or --completed flag."),
-        );
-      }
     });
 
   program
@@ -253,13 +259,13 @@ export function cli(): void {
     .description("Delete project")
     .option("-i, --id <number>", "delete project by id")
     .action(async (options): Promise<void> => {
+      if (Object.keys(options).length === 0) {
+        console.warn(pc.yellow("Please provide either --id <number> flag."));
+        process.exit(1);
+      }
       if (options.id) {
         const projectID = Number(options.id);
         await deleteProject(projectID);
-      }
-
-      if (Object.keys(options).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
       }
     });
 
@@ -273,14 +279,14 @@ export function cli(): void {
       "invoice.pdf",
     )
     .action(async (path, options): Promise<void> => {
+      if (Object.keys(options).length === 0) {
+        console.warn(pc.yellow("Please provide either --id <number> flag."));
+        process.exit(1);
+      }
       if (options.id) {
         const projectId = Number(options.id);
         await generatePDF(projectId, path);
         console.log(pc.green(`Project ${projectId} exported to ${path}`));
-      }
-
-      if (!options.id) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
       }
     });
 
@@ -295,6 +301,12 @@ export function cli(): void {
       "output.csv",
     )
     .action(async (path, options): Promise<void> => {
+      if (Object.keys(options).length === 0) {
+        console.warn(
+          pc.yellow("Please provide either --id <number> or --all flag."),
+        );
+        process.exit(1);
+      }
       if (options.id) {
         const projectId = Number(options.id);
         await exportCSVById(projectId, path);
@@ -304,12 +316,6 @@ export function cli(): void {
       if (options.all) {
         await exportAllCSV(path);
         console.log(pc.green(`All projects were exported to ${path}`));
-      }
-
-      if (!options.id && !options.all) {
-        console.warn(
-          pc.yellow("Please provide either --id <number> or --all flag."),
-        );
       }
     });
 
