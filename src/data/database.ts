@@ -48,6 +48,8 @@ export const initDB = () => {
     `);
 };
 
+initDB();
+
 export const saveProject = (project: saveProjectInterface) => {
   const query = db.prepare(`
         INSERT INTO projects (
