@@ -29,18 +29,13 @@ jobs:
           mkdir -p dist
           bun build ./src/index.ts --compile --minify --outfile ./dist/invoice
 
-      - name: Prepare nFPM
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Generate .deb and .rpm
-        uses: goreleaser/nfpm-action@v2
+      - name: Generate Packages (deb & rpm)
+        uses: goreleaser/nfpm-action@v3
         with:
-          nfpm_version: latest
+          version: latest
           args: package --config nfpm.yaml --target ./dist/
         env:
-          VERSION: ${{ env.VERSION }}
+          VERSION: ${{ github.ref_name }}
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
