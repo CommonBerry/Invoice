@@ -13,7 +13,7 @@
 
 Invoice is a modern CLI tool designed to help freelancers manage their projects with speed and efficiency, without ever leaving the terminal. Track your projects, manage payments, and never miss a deadline again.
 
-## ✨ Features
+## Features
 
 - **Project Management**: Create, list, and manage all your projects.
 - **Detailed View**: Get detailed information for a specific project by its ID or name.
@@ -23,7 +23,7 @@ Invoice is a modern CLI tool designed to help freelancers manage their projects 
 - **Interactive UI**: User-friendly prompts for creating and updating projects.
 - **Customizable**: Setup your own configuration for the tool.
 
-## 📦 Installation
+## Installation
 
 Currently, Invoice can be installed by cloning the repository and running the installation script.
 
@@ -43,7 +43,7 @@ bun run install
 
 _Make sure you have `~/.local/bin` in your PATH._
 
-## 🚀 Usage
+## Usage
 
 Invoice provides a set of commands to manage your projects seamlessly.
 
@@ -116,7 +116,7 @@ Export projects to a CSV file.
 - `-a, --all`: Export all projects.
 - `[path]`: Optional output path for the CSV file (defaults to `output.csv`).
 
-## 🛠️ Built With
+## Built With
 
 - [TypeScript](https://www.typescriptlang.org/) - Main language
 - [Bun](https://bun.sh/) - JavaScript toolkit
@@ -125,10 +125,10 @@ Export projects to a CSV file.
 - [cli-table3](https://github.com/cli-table/cli-table3) - Table rendering
 - [PDFKit](http://pdfkit.org/) - PDF generation library
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/henriquehnnm/invoice/issues).
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
