@@ -4,17 +4,15 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -29,23 +27,9 @@ jobs:
           mkdir -p dist
           bun build ./src/index.ts --compile --minify --outfile ./dist/invoice
 
-      - name: Generate .deb and .rpm
-        uses: appleboy/nfpm-action@master
-        with:
-          target: "deb,rpm"
-          config: "nfpm.yaml"
-          out_dir: "./dist"
-        env:
-          VERSION: ${{ github.ref_name }}
-
-      - name: Upload Release Assets
+      - name: Upload Binary to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ./dist/invoice
-            ./dist/*.deb
-            ./dist/*.rpm
-          draft: false
-          prerelease: false
+          files: ./dist/invoice
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
