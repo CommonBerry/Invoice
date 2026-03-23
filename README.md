@@ -9,10 +9,6 @@
 
 ---
 
-## ⚠️ Warning
-
-**_Invoice is in an early Beta release. It may contain bugs, performance issues, or incomplete features. Use with caution._**
-
 ## About
 
 Invoice is a modern CLI tool designed to help freelancers manage their projects with speed and efficiency, without ever leaving the terminal. Track your projects, manage payments, and never miss a deadline again.
