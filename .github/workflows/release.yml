@@ -2,7 +2,10 @@ name: Release Invoice
 on:
   push:
     tags:
-      - 'v*' # Dispara o robô só quando você criar uma tag tipo v1.0.3
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -19,7 +22,7 @@ jobs:
         run: bun install
 
       - name: Build Binary
-        run: bun run build # Usa o script que você acabou de colocar no package.json
+        run: bun run build
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
