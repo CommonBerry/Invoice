@@ -1,5 +1,5 @@
 {
-  "name": "@Henriquehnnm/invoice",
+  "name": "@henriquehnnm/invoice",
   "description": "Manage your freelance projects elegantly",
   "author": "Henrique Sardinha",
   "main": "src/index.ts",
