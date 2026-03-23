@@ -1,0 +1,29 @@
+name: Release Invoice
+on:
+  push:
+    tags:
+      - 'v*' # Dispara o robô só quando você criar uma tag tipo v1.0.3
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build Binary
+        run: bun run build # Usa o script que você acabou de colocar no package.json
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./dist/invoice
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
