@@ -1,17 +1,20 @@
 name: Release Invoice
+
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -22,11 +25,31 @@ jobs:
         run: bun install
 
       - name: Build Binary
-        run: bun run build
+        run: |
+          mkdir -p dist
+          bun build ./src/index.ts --compile --minify --outfile ./dist/invoice
+
+      - name: Prepare nFPM
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Generate .deb and .rpm
+        uses: goreleaser/nfpm-action@v2
+        with:
+          nfpm_version: latest
+          args: package --config nfpm.yaml --target ./dist/
+        env:
+          VERSION: ${{ env.VERSION }}
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./dist/invoice
+          files: |
+            ./dist/invoice
+            ./dist/*.deb
+            ./dist/*.rpm
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
