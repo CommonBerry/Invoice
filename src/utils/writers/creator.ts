@@ -13,7 +13,8 @@ export async function creator() {
     saveProject(data);
 
     p.outro(pc.green("Project completed successfully!"));
-  } catch (err) {
-    console.error(`ERROR: ${err}`);
+  } catch (error) {
+    console.error(`${error}`);
+    process.exit(1)
   }
 }

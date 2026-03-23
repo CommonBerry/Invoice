@@ -1,17 +1,12 @@
-import { Database } from "bun:sqlite";
 import { homedir } from "os";
-import fs from "fs";
 import type { Project } from "../types/projects";
 import { join } from "node:path";
+import { prepareDB  } from "./database"
 
 const DB_DIR = join(homedir(), ".local", "share", "invoice", "db");
-
 const DB_PATH = join(DB_DIR, "projects.sqlite");
+const db = prepareDB(DB_DIR, DB_PATH)
 
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
-}
-const db = new Database(DB_PATH, { create: true });
 
 export const data = async (): Promise<Project[]> => {
   return db.query(`SELECT * FROM projects`).all() as Project[];

@@ -1,7 +1,7 @@
 import { readUserForInit, genericConfirm } from "../../cli/readUser";
 import { homedir } from "os";
 
-export const setup = async (): Promise<boolean> => {
+export const setup = async (): Promise<[boolean, Error | null]> => {
   const configPath = `${homedir()}/.invoicerc`;
   const file = Bun.file(configPath);
 
@@ -11,15 +11,15 @@ export const setup = async (): Promise<boolean> => {
       false,
     );
     if (!data) {
-      return false;
+      return [false, null];
     }
   }
 
   const data = await readUserForInit();
   try {
     await Bun.write(configPath, JSON.stringify(data, null, 2));
-    return true;
+    return [true, null];
   } catch (error) {
-    return false;
+    return [false, error as Error];
   }
 };

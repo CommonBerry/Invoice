@@ -27,17 +27,17 @@ export function cli(): void {
   program
     .name("invoice")
     .description("Manage your freelance projects elegantly")
-    .version("1.0.2");
+    .version("1.0.3");
 
   program
     .command("setup")
     .description("Start Invoice configuration")
     .action(async (): Promise<void> => {
-      const result = await setup();
+      const [result, error] = await setup();
       if (result) {
         console.log(pc.green("Logged in successfully! :)"));
       } else {
-        console.log(pc.red("Operation aborted. :("));
+        console.log(pc.red(`${error ? error : "Operation canceled"} :(`));
       }
     });
 
@@ -195,7 +195,8 @@ export function cli(): void {
         updateProject(projectId, { [data]: value });
         outro(pc.green("Project updated successfully!"));
       } catch (error) {
-        console.error("Something went wrong");
+        console.error(`${error}`);
+        process.exit(1)
       }
     });
 
@@ -208,9 +209,9 @@ export function cli(): void {
     .action(async (options): Promise<void> => {
       if (Object.keys(options).length === 0) {
         console.warn(
-          pc.yellow("Please provide either --started or --completed flag."),
-          process.exit(1),
+          pc.yellow("Please provide either --started or --completed flag.")
         );
+        process.exit(1)
       }
       const Table = require("cli-table3");
       const table = new Table({
@@ -223,7 +224,7 @@ export function cli(): void {
 
       if (options.started) {
         const projects = getProjectsByStarted();
-        if (projects!.length > 0) {
+        if (projects && projects.length > 0) {
           if (options.json) {
             console.log(JSON.stringify(projects, null, 2));
           } else {
@@ -239,7 +240,7 @@ export function cli(): void {
 
       if (options.completed) {
         const projects = getProjectsByCompleted();
-        if (projects!.length > 0) {
+        if (projects && projects.length > 0) {
           if (options.json) {
             console.log(JSON.stringify(projects, null, 2));
           } else {

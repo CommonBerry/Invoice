@@ -4,15 +4,23 @@ import { homedir } from "os";
 import fs from "fs";
 import type { saveProjectInterface } from "../types/projects.ts";
 
-// Resolver path
-const DB_DIR = join(homedir(), ".local", "share", "invoice", "db");
-
-const DB_PATH = join(DB_DIR, "projects.sqlite");
-
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
+export const prepareDB = (dir: string, path: string) => {
+  try {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const db = new Database(path, { create: true });
+    return db
+  } catch (error) {
+    console.error(`${error}`)
+    process.exit(1)
+  }
 }
-const db = new Database(DB_PATH, { create: true });
+
+
+const DB_DIR = join(homedir(), ".local", "share", "invoice", "db");
+const DB_PATH = join(DB_DIR, "projects.sqlite");
+const db = prepareDB(DB_DIR, DB_PATH)
 
 /**
  * # Initialize tables if they do not exist

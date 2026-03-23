@@ -52,7 +52,8 @@ export async function exportCSVById(id: number, path: string) {
 
     await Bun.write(path, csvData);
   } catch (error) {
-    console.error(`ERROR: ${error}`);
+    console.error(`${error}`);
+    process.exit(1)
   }
 }
 
@@ -85,6 +86,7 @@ export async function exportAllCSV(path: string) {
 
     await Bun.write(path, csvData);
   } catch (error) {
-    console.error(`ERROR: ${error}`);
+    console.error(`${error}`);
+    process.exit(1)
   }
 }
