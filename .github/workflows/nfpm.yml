@@ -6,7 +6,7 @@ section: "default"
 priority: "extra"
 maintainer: "Henrique hello.henrique@proton.me"
 description: "Manage your freelance projects elegantly"
-homepage: "https://github.com/CommonBerry/invoice"
+homepage: "https://github.com/seu-usuario/invoice"
 license: "GPLv3"
 contents:
   - src: ./dist/invoice

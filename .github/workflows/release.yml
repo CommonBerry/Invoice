@@ -29,15 +29,16 @@ jobs:
           mkdir -p dist
           bun build ./src/index.ts --compile --minify --outfile ./dist/invoice
 
-      - name: Generate Packages (deb & rpm)
-        uses: goreleaser/nfpm-action@v3
+      - name: Generate .deb and .rpm
+        uses: appleboy/nfpm-action@master
         with:
-          version: latest
-          args: package --config nfpm.yaml --target ./dist/
+          target: "deb,rpm"
+          config: "nfpm.yaml"
+          out_dir: "./dist"
         env:
           VERSION: ${{ github.ref_name }}
 
-      - name: Upload Release
+      - name: Upload Release Assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
