@@ -4,7 +4,7 @@
   "author": "Henrique Sardinha",
   "main": "src/index.ts",
   "module": "index.ts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "scripts": {
     "dev": "bun run src/index.ts",
