@@ -18,7 +18,7 @@ export async function getProjectByName(name: string): Promise<Project | null | u
     const getProject = project.find((p) => p.name === name)
     return getProject || null
   } catch (error) {
-    console.error(`ERROR: ${error}`)
+    console.error(`${error}`)
     process.exit(1)
   }
 }
