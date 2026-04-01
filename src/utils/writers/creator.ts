@@ -1,20 +1,20 @@
-import { readUserForCreate } from "../../cli/readUser";
-import { initDB, saveProject } from "../../data/database.ts";
-import * as p from "@clack/prompts";
-import pc from "picocolors";
+import * as p from '@clack/prompts'
+import pc from 'picocolors'
+import { readUserForCreate } from '../../cli/readUser'
+import { initDB, saveProject } from '../../data/database.ts'
 
 export async function creator() {
   try {
-    const data = await readUserForCreate();
+    const data = await readUserForCreate()
 
     // Database
-    initDB();
+    initDB()
 
-    saveProject(data);
+    saveProject(data)
 
-    p.outro(pc.green("Project completed successfully!"));
+    p.outro(pc.green('Project completed successfully!'))
   } catch (error) {
-    console.error(`${error}`);
+    console.error(`${error}`)
     process.exit(1)
   }
 }

@@ -1,74 +1,71 @@
-import * as p from "@clack/prompts";
-import pc from "picocolors";
-import { z } from "zod";
+import * as p from '@clack/prompts'
+import pc from 'picocolors'
+import { z } from 'zod'
 
 export async function readUserForInit() {
-  p.intro(pc.cyan("INVOICE CLI - Setup"));
+  p.intro(pc.cyan('INVOICE CLI - Setup'))
 
   const data = await p.group(
     {
       name: () =>
         p.text({
-          message: "Enter your name:",
-          placeholder: "Ex: Assim e Assim",
+          message: 'Enter your name:',
+          placeholder: 'Ex: Assim e Assim',
           validate: (value) => {
-            if (!value) return "The name is mandatory!";
+            if (!value) return 'The name is mandatory!'
           },
         }),
 
       email: () =>
         p.text({
-          message: "Enter your email:",
-          placeholder: "Ex: hello.world@example.com",
+          message: 'Enter your email:',
+          placeholder: 'Ex: hello.world@example.com',
           validate: (value) => {
-            const result = z.email().safeParse(value);
+            const result = z.email().safeParse(value)
             if (!result.success) {
-              return "The email is invalid or empty!";
+              return 'The email is invalid or empty!'
             }
           },
         }),
     },
     {
       onCancel: () => {
-        p.cancel("Operation canceled!");
-        process.exit(0);
+        p.cancel('Operation canceled!')
+        process.exit(0)
       },
     },
-  );
+  )
 
-  return data;
+  return data
 }
 
-const today = new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split('T')[0]
 
 export async function readUserForCreate() {
-  const isIsoDate = (input: string): boolean =>
-    z.iso.date().safeParse(input).success;
+  const isIsoDate = (input: string): boolean => z.iso.date().safeParse(input).success
 
   // Parser deadline
   const parseDeadline = (input: string): string | null => {
-    const match = input
-      .toLowerCase()
-      .match(/^(\d+)\s*(d|m|y|days?|months?|years?)$/);
-    if (!match) return null;
+    const match = input.toLowerCase().match(/^(\d+)\s*(d|m|y|days?|months?|years?)$/)
+    if (!match) return null
 
-    const rawValue = match[1];
-    const rawUnit = match[2];
-    if (!rawValue || !rawUnit) return null;
-    const value = Number.parseFloat(rawValue);
-    const unit = rawUnit.charAt(0);
+    const rawValue = match[1]
+    const rawUnit = match[2]
+    if (!rawValue || !rawUnit) return null
+    const value = Number.parseFloat(rawValue)
+    const unit = rawUnit.charAt(0)
 
-    const date = new Date();
-    if (unit === "d") date.setDate(date.getDate() + value);
-    if (unit === "m") date.setMonth(date.getMonth() + value);
-    if (unit === "y") date.setFullYear(date.getFullYear() + value);
+    const date = new Date()
+    if (unit === 'd') date.setDate(date.getDate() + value)
+    if (unit === 'm') date.setMonth(date.getMonth() + value)
+    if (unit === 'y') date.setFullYear(date.getFullYear() + value)
 
-    // @ts-ignore
-    return date.toISOString().split("T")[0];
-  };
+    // @ts-expect-error
+    return date.toISOString().split('T')[0]
+  }
 
   // Start User Interface
-  p.intro(pc.cyan("INVOICE CLI - New Project"));
+  p.intro(pc.cyan('INVOICE CLI - New Project'))
 
   /**
    * # Main Inputs
@@ -78,69 +75,69 @@ export async function readUserForCreate() {
     {
       name: () =>
         p.text({
-          message: "Project name:",
-          placeholder: "Ex: delivery app",
+          message: 'Project name:',
+          placeholder: 'Ex: delivery app',
           validate: (value) => {
-            if (!value) return "The name is mandatory!";
+            if (!value) return 'The name is mandatory!'
           },
         }),
 
       description: () =>
         p.text({
-          message: "Project description:",
-          placeholder: "API for a mobile delivery app",
-          defaultValue: "No description",
+          message: 'Project description:',
+          placeholder: 'API for a mobile delivery app',
+          defaultValue: 'No description',
         }),
 
       chargeType: () =>
         p.select({
-          message: "Type of charge:",
+          message: 'Type of charge:',
           options: [
-            { value: "fixed", label: "Fixed value" },
-            { value: "perHour", label: "Per hour" },
+            { value: 'fixed', label: 'Fixed value' },
+            { value: 'perHour', label: 'Per hour' },
           ],
         }),
 
       clientName: () =>
         p.text({
-          message: "Customer name:",
-          placeholder: "Ex: Tux the Penguin",
+          message: 'Customer name:',
+          placeholder: 'Ex: Tux the Penguin',
           validate: (value) => {
-            if (!value) return "The customer's name is mandatory!";
+            if (!value) return "The customer's name is mandatory!"
           },
         }),
 
       clientEmail: () =>
         p.text({
-          message: "Customer email:",
-          placeholder: "Ex: tuxthepenguim@example.com",
+          message: 'Customer email:',
+          placeholder: 'Ex: tuxthepenguim@example.com',
           validate: (value) => {
-            const result = z.email().safeParse(value);
+            const result = z.email().safeParse(value)
             if (!result.success) {
-              return "Invalid email syntax!";
+              return 'Invalid email syntax!'
             }
           },
         }),
 
       clientCompany: () =>
         p.text({
-          message: "Customer company:",
-          placeholder: "(Optional) The Linux Foundation",
-          defaultValue: "No company",
+          message: 'Customer company:',
+          placeholder: '(Optional) The Linux Foundation',
+          defaultValue: 'No company',
         }),
 
       startDate: () =>
         p.text({
-          message: "Start date (YYYY-MM-DD)",
+          message: 'Start date (YYYY-MM-DD)',
           placeholder: today,
           defaultValue: today,
           validate: (value) => {
             const result = z
               .string()
               .regex(/^\d{4}-\d{2}-\d{2}$/)
-              .safeParse(value?.trim());
+              .safeParse(value?.trim())
             if (!result.success) {
-              return "Invalid format! Use YYYY-MM-DD (ex: 2026-02-23)";
+              return 'Invalid format! Use YYYY-MM-DD (ex: 2026-02-23)'
             }
           },
         }),
@@ -158,114 +155,108 @@ export async function readUserForCreate() {
 
       deliveryForecast: () =>
         p.text({
-          message: "Delivery forecast:",
-          placeholder: "Use 20d (after today) or YYYY-MM-DD",
-          defaultValue: "Not informed",
+          message: 'Delivery forecast:',
+          placeholder: 'Use 20d (after today) or YYYY-MM-DD',
+          defaultValue: 'Not informed',
           validate: (value) => {
-            const input = (value ?? "").trim();
-            if (!input) return;
+            const input = (value ?? '').trim()
+            if (!input) return
 
-            if (isIsoDate(input)) return;
+            if (isIsoDate(input)) return
 
-            const deadline = parseDeadline(input);
+            const deadline = parseDeadline(input)
             if (!deadline) {
-              return 'Invalid format! Use YYYY-MM-DD or shortcuts like "15d", "2m", "1y"';
+              return 'Invalid format! Use YYYY-MM-DD or shortcuts like "15d", "2m", "1y"'
             }
           },
         }),
 
       projectStarted: () =>
         p.confirm({
-          message: "Has the project already started?",
+          message: 'Has the project already started?',
           initialValue: false,
         }),
 
       budget: () =>
         p.text({
-          message: "What is the total budget?",
-          placeholder: "Simple number. Ex: 1200",
+          message: 'What is the total budget?',
+          placeholder: 'Simple number. Ex: 1200',
           validate: (value) => {
-            if (isNaN(Number(value))) return "Enter a valid number!";
+            if (Number.isNaN(Number(value))) return 'Enter a valid number!'
           },
         }),
 
       contactBudget: () =>
         p.text({
-          message: "What is the total value of the contract?",
-          placeholder: "Simple number. Ex: 1200",
+          message: 'What is the total value of the contract?',
+          placeholder: 'Simple number. Ex: 1200',
           validate: (value) => {
-            if (isNaN(Number(value))) return "Enter a valid number!";
+            if (Number.isNaN(Number(value))) return 'Enter a valid number!'
           },
         }),
 
       isInitialPay: () =>
         p.text({
-          message: "Has there already been an initial payment?",
-          placeholder: "Type enter for none",
+          message: 'Has there already been an initial payment?',
+          placeholder: 'Type enter for none',
           validate: (value) => {
-            const input = (value ?? "").trim();
+            const input = (value ?? '').trim()
 
-            if (input === "") return;
+            if (input === '') return
 
-            if (isNaN(Number(input))) return "Enter a valid number!";
+            if (Number.isNaN(Number(input))) return 'Enter a valid number!'
           },
         }),
 
       expectedPayDate: () =>
         p.text({
-          message: "Pay date forecast:",
-          placeholder: "20d (after today) or YYYY-MM-DD",
-          defaultValue: "Not informed",
+          message: 'Pay date forecast:',
+          placeholder: '20d (after today) or YYYY-MM-DD',
+          defaultValue: 'Not informed',
           validate: (value) => {
-            const input = (value ?? "").trim();
-            if (!input) return;
+            const input = (value ?? '').trim()
+            if (!input) return
 
-            if (isIsoDate(input)) return;
+            if (isIsoDate(input)) return
 
-            const deadline = parseDeadline(input);
+            const deadline = parseDeadline(input)
             if (!deadline) {
-              return 'Invalid format! Use YYYY-MM-DD or shortcuts like "15d", "2m", "1y"';
+              return 'Invalid format! Use YYYY-MM-DD or shortcuts like "15d", "2m", "1y"'
             }
           },
         }),
     },
     {
       onCancel: () => {
-        p.cancel("Operation canceled.");
-        process.exit(0);
+        p.cancel('Operation canceled.')
+        process.exit(0)
       },
     },
-  );
+  )
 
   return {
     ...projectData,
-    deliveryForecast:
-      parseDeadline(projectData.deliveryForecast) ||
-      projectData.deliveryForecast,
+    deliveryForecast: parseDeadline(projectData.deliveryForecast) || projectData.deliveryForecast,
     projectCompleted: false,
-    expectedPayDate:
-      parseDeadline(projectData.expectedPayDate) || projectData.expectedPayDate,
+    expectedPayDate: parseDeadline(projectData.expectedPayDate) || projectData.expectedPayDate,
     budget: Number(projectData.budget),
     contactBudget: Number(projectData.contactBudget),
-    isInitialPay:
-      projectData.isInitialPay === "" ? 0 : Number(projectData.isInitialPay),
-  };
+    isInitialPay: projectData.isInitialPay === '' ? 0 : Number(projectData.isInitialPay),
+  }
 }
 
 // Readuser for update
-export async function readUserForUpdateCompleted(
-  currentStatus: boolean,
-): Promise<boolean> {
-  p.intro(pc.cyan("INVOICE CLI - Complete project"));
+export async function readUserForUpdateCompleted(currentStatus: boolean): Promise<boolean> {
+  p.intro(pc.cyan('INVOICE CLI - Complete project'))
 
   const toggleCompleted: boolean | symbol = await p.confirm({
-    message: `Project is currently ${currentStatus ? "completed" : "NOT completed"}. Toggle Status`,
+    message: `Project is currently ${currentStatus ? 'completed' : 'NOT completed'}. Toggle Status`,
     initialValue: !currentStatus,
-  });
+  })
 
   if (p.isCancel(toggleCompleted)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
 
   // if/else CLASSICO pra evirar erro
@@ -274,79 +265,74 @@ export async function readUserForUpdateCompleted(
   // } else {
   //     return currentStatus
   // }
-  return toggleCompleted ? !currentStatus : currentStatus;
+  return toggleCompleted ? !currentStatus : currentStatus
 }
 
 /**
  * # Start existent project
  * */
-export async function readUserForStart(
-  currentStatus: boolean,
-): Promise<boolean> {
-  p.intro(pc.cyan("INVOICE CLI - Start project"));
+export async function readUserForStart(currentStatus: boolean): Promise<boolean> {
+  p.intro(pc.cyan('INVOICE CLI - Start project'))
 
   const toggleStarted: boolean | symbol = await p.confirm({
-    message: `Project is currently ${currentStatus ? "started. Toggle Status?" : "not started. Start project?"}`,
+    message: `Project is currently ${currentStatus ? 'started. Toggle Status?' : 'not started. Start project?'}`,
     initialValue: !currentStatus,
-  });
+  })
 
   if (p.isCancel(toggleStarted)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
 
-  return toggleStarted ? !currentStatus : currentStatus;
+  return toggleStarted ? !currentStatus : currentStatus
 }
 
-export async function genericConfirm(
-  text: string,
-  iniVal: boolean,
-): Promise<boolean> {
+export async function genericConfirm(text: string, iniVal: boolean): Promise<boolean> {
   const result: boolean | symbol = await p.confirm({
     message: pc.bold(pc.yellow(text)),
     initialValue: iniVal,
-  });
+  })
 
   if (p.isCancel(result)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
 
-  return result;
+  return result
 }
 
 const readUserForEditChargeType = async () => {
   const data = await p.select({
-    message: "Type of charge:",
+    message: 'Type of charge:',
     options: [
-      { value: "fixed", label: "Fixed value" },
-      { value: "perHour", label: "Per hour" },
+      { value: 'fixed', label: 'Fixed value' },
+      { value: 'perHour', label: 'Per hour' },
     ],
-  });
+  })
   if (p.isCancel(data)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
-  return data;
-};
+  return data
+}
 
 const readUserForEditEmail = async () => {
   const data = await p.text({
-    message: "Customer email:",
-    placeholder: "Ex: tuxthepenguim@example.com",
+    message: 'Customer email:',
+    placeholder: 'Ex: tuxthepenguim@example.com',
     validate: (value) => {
-      const result = z.email().safeParse(value);
+      const result = z.email().safeParse(value)
       if (!result.success) {
-        return "Invalid email syntax!";
+        return 'Invalid email syntax!'
       }
     },
-  });
+  })
   if (p.isCancel(data)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
-  return data;
-};
+  return data
+}
 
 const readUserForEditDate = async (title: string) => {
   const data = await p.text({
@@ -357,101 +343,96 @@ const readUserForEditDate = async (title: string) => {
       const result = z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/)
-        .safeParse(value?.trim());
+        .safeParse(value?.trim())
       if (!result.success) {
-        return "Invalid format! Use YYYY-MM-DD (ex: 2026-02-23)";
+        return 'Invalid format! Use YYYY-MM-DD (ex: 2026-02-23)'
       }
     },
-  });
+  })
 
   if (p.isCancel(data)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
-  return data;
-};
+  return data
+}
 
 const readUserForEditNumber = async (title: string) => {
   const data = await p.text({
     message: title,
-    placeholder: "Simple number. Ex: 1200",
+    placeholder: 'Simple number. Ex: 1200',
     validate: (value) => {
-      if (isNaN(Number(value))) return "Enter a valid number!";
+      if (Number.isNaN(Number(value))) return 'Enter a valid number!'
     },
-  });
+  })
 
   if (p.isCancel(data)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
 
-  return data;
-};
+  return data
+}
 
 export async function readUserForEdit() {
-  p.intro(pc.cyan("INVOICE CLI - Edit project"));
+  p.intro(pc.cyan('INVOICE CLI - Edit project'))
   const data = await p.select({
-    message: "Select the option to edit",
+    message: 'Select the option to edit',
     options: [
-      { value: "name", label: "Name" },
-      { value: "description", label: "Description" },
-      { value: "chargeType", label: "Charge Type" },
-      { value: "clientName", label: "Client Name" },
-      { value: "clientEmail", label: "Client Email" },
-      { value: "clientCompany", label: "Client Company" },
-      { value: "startDate", label: "Start Date" },
-      { value: "deliveryForecast", label: "Delivery Forecast" },
-      { value: "budget", label: "Budget" },
-      { value: "contactBudget", label: "Contact Budget" },
-      { value: "initialPay", label: "Initial Pay" },
-      { value: "expectedPayDate", label: "Expected Pay Date" },
+      { value: 'name', label: 'Name' },
+      { value: 'description', label: 'Description' },
+      { value: 'chargeType', label: 'Charge Type' },
+      { value: 'clientName', label: 'Client Name' },
+      { value: 'clientEmail', label: 'Client Email' },
+      { value: 'clientCompany', label: 'Client Company' },
+      { value: 'startDate', label: 'Start Date' },
+      { value: 'deliveryForecast', label: 'Delivery Forecast' },
+      { value: 'budget', label: 'Budget' },
+      { value: 'contactBudget', label: 'Contact Budget' },
+      { value: 'initialPay', label: 'Initial Pay' },
+      { value: 'expectedPayDate', label: 'Expected Pay Date' },
     ],
-  });
+  })
 
   if (p.isCancel(data)) {
-    p.cancel("Operation canceled.");
-    process.exit(0);
+    p.cancel('Operation canceled.')
+    process.exit(0)
   }
 
-  let value = null;
+  let value = null
 
-  if (data === "chargeType") {
-    value = await readUserForEditChargeType();
-  } else if (data === "clientEmail") {
-    value = await readUserForEditEmail();
-  } else if (data === "startDate") {
-    value = await readUserForEditDate("Start date (YYYY-MM-DD)");
-  } else if (data === "deliveryForecast") {
-    value = await readUserForEditDate("Delivery forecast");
-  } else if (data === "budget") {
-    value = await readUserForEditNumber("What is the total budget?");
-  } else if (data === "contactBudget") {
-    value = await readUserForEditNumber(
-      "What is the total value of the contract?",
-    );
-  } else if (data === "initialPay") {
-    value = await readUserForEditNumber(
-      "Has there already been an initial payment?",
-    );
-  } else if (data === "expectedPayDate") {
-    value = await readUserForEditDate("Pay date forecast:");
+  if (data === 'chargeType') {
+    value = await readUserForEditChargeType()
+  } else if (data === 'clientEmail') {
+    value = await readUserForEditEmail()
+  } else if (data === 'startDate') {
+    value = await readUserForEditDate('Start date (YYYY-MM-DD)')
+  } else if (data === 'deliveryForecast') {
+    value = await readUserForEditDate('Delivery forecast')
+  } else if (data === 'budget') {
+    value = await readUserForEditNumber('What is the total budget?')
+  } else if (data === 'contactBudget') {
+    value = await readUserForEditNumber('What is the total value of the contract?')
+  } else if (data === 'initialPay') {
+    value = await readUserForEditNumber('Has there already been an initial payment?')
+  } else if (data === 'expectedPayDate') {
+    value = await readUserForEditDate('Pay date forecast:')
   } else {
     value = await p.text({
-      message: "New value:",
+      message: 'New value:',
       validate: (value) => {
-        if (!value)
-          return "The new value is required (type ctrl + c to cancel)";
+        if (!value) return 'The new value is required (type ctrl + c to cancel)'
       },
-    });
+    })
 
     if (p.isCancel(value)) {
-      p.cancel("Operation canceled.");
-      process.exit(0);
+      p.cancel('Operation canceled.')
+      process.exit(0)
     }
   }
 
   return {
     data,
     value,
-  };
+  }
 }

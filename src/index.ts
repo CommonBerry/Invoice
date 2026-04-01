@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 
-import { cli } from "./cli";
+import { cli } from './cli'
 
 function main() {
-  cli();
+  cli()
 }
 
-main();
+main()

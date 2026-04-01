@@ -1,15 +1,15 @@
-import { Database } from "bun:sqlite";
-import { join } from "node:path";
-import { homedir } from "os";
-import fs from "fs";
-import type { saveProjectInterface } from "../types/projects.ts";
+import { Database } from 'bun:sqlite'
+import { join } from 'node:path'
+import fs from 'node:fs'
+import { homedir } from 'node:os'
+import type { saveProjectInterface } from '../types/projects.ts'
 
 export const prepareDB = (dir: string, path: string) => {
   try {
     if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+      fs.mkdirSync(dir, { recursive: true })
     }
-    const db = new Database(path, { create: true });
+    const db = new Database(path, { create: true })
     return db
   } catch (error) {
     console.error(`${error}`)
@@ -17,9 +17,8 @@ export const prepareDB = (dir: string, path: string) => {
   }
 }
 
-
-const DB_DIR = join(homedir(), ".local", "share", "invoice", "db");
-const DB_PATH = join(DB_DIR, "projects.sqlite");
+const DB_DIR = join(homedir(), '.local', 'share', 'invoice', 'db')
+const DB_PATH = join(DB_DIR, 'projects.sqlite')
 const db = prepareDB(DB_DIR, DB_PATH)
 
 /**
@@ -53,10 +52,10 @@ export const initDB = () => {
 
             createdAt TEXT DEFAULT CURRENT_TIMESTAMP
         )
-    `);
-};
+    `)
+}
 
-initDB();
+initDB()
 
 export const saveProject = (project: saveProjectInterface) => {
   const query = db.prepare(`
@@ -69,7 +68,7 @@ export const saveProject = (project: saveProjectInterface) => {
             $clientCompany, $startDate, $deliveryForecast, $budget, $contactBudget,
             $isInitialPay, $expectedPayDate, $projectStarted, $projectCompleted
         )
-    `);
+    `)
 
   query.run({
     $name: project.name,
@@ -86,7 +85,7 @@ export const saveProject = (project: saveProjectInterface) => {
     $expectedPayDate: project.expectedPayDate,
     $projectStarted: project.projectStarted ? 1 : 0,
     $projectCompleted: project.projectCompleted ? 1 : 0,
-  });
-};
+  })
+}
 
-export default db;
+export default db

@@ -1,29 +1,25 @@
-import Papa from "papaparse";
-
-import { getProjectById } from "../readers/finder";
-import { data } from "../../data/readRaw";
-import { genericConfirm } from "../../cli/readUser";
-import pc from "picocolors";
+import Papa from 'papaparse'
+import pc from 'picocolors'
+import { genericConfirm } from '../../cli/readUser'
+import { data } from '../../data/readRaw'
+import { getProjectById } from '../readers/finder'
 
 export async function exportCSVById(id: number, path: string) {
   try {
-    const isExist = Bun.file(path);
+    const isExist = Bun.file(path)
     if (await isExist.exists()) {
-      const userReq = await genericConfirm(
-        `File ${path} already exists. Overwrite?`,
-        false,
-      );
+      const userReq = await genericConfirm(`File ${path} already exists. Overwrite?`, false)
       if (!userReq) {
-        console.warn(pc.red("Operation canceled."));
-        process.exit(0);
+        console.warn(pc.red('Operation canceled.'))
+        process.exit(0)
       }
     }
 
-    const project = await getProjectById(id);
+    const project = await getProjectById(id)
 
     if (!project) {
-      console.error(`Project ${id} not found.`);
-      process.exit(1);
+      console.error(`Project ${id} not found.`)
+      process.exit(1)
     }
 
     const csvData = Papa.unparse([project], {
@@ -31,62 +27,59 @@ export async function exportCSVById(id: number, path: string) {
       skipEmptyLines: true,
       quotes: true,
       columns: [
-        "id",
-        "name",
-        "description",
-        "chargeType",
-        "clientName",
-        "clientEmail",
-        "clientCompany",
-        "startDate",
-        "deliveryForecast",
-        "budget",
-        "contactBudget",
-        "initialPay",
-        "expectedPayDate",
-        "projectStarted",
-        "projectCompleted",
-        "createdAt",
+        'id',
+        'name',
+        'description',
+        'chargeType',
+        'clientName',
+        'clientEmail',
+        'clientCompany',
+        'startDate',
+        'deliveryForecast',
+        'budget',
+        'contactBudget',
+        'initialPay',
+        'expectedPayDate',
+        'projectStarted',
+        'projectCompleted',
+        'createdAt',
       ],
-    });
+    })
 
-    await Bun.write(path, csvData);
+    await Bun.write(path, csvData)
   } catch (error) {
-    console.error(`${error}`);
+    console.error(`${error}`)
     process.exit(1)
   }
 }
 
 export async function exportAllCSV(path: string) {
   try {
-    const isExist = Bun.file(path);
+    const isExist = Bun.file(path)
     if (await isExist.exists()) {
-      const userReq = await genericConfirm(
-        `File ${path} already exists. Overwrite?`,
-        false,
-      );
+      const userReq = await genericConfirm(`File ${path} already exists. Overwrite?`, false)
       if (!userReq) {
-        console.warn(pc.red("Operation canceled."));
-        process.exit(0);
+        console.warn(pc.red('Operation canceled.'))
+        process.exit(0)
       }
     }
 
-    const projetcs = await data();
+    const projetcs = await data()
 
     if (projetcs.length <= 0) {
-      console.error("No projects found.");
-      process.exit(1);
+      console.error('No projects found.')
+      process.exit(1)
     }
 
     const csvData = Papa.unparse(projetcs, {
       header: true,
       skipEmptyLines: true,
       quotes: true,
-    });
+    })
 
-    await Bun.write(path, csvData);
+    await Bun.write(path, csvData)
   } catch (error) {
-    console.error(`${error}`);
+    console.error(`${error}`)
     process.exit(1)
   }
 }

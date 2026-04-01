@@ -1,324 +1,290 @@
-import { Command } from "commander";
-import { creator } from "../utils/writers/creator";
-import { readAll } from "../utils/readers/readAll";
-import { getProjectById, getProjectByName } from "../utils/readers/finder";
-import {
-  readUserForUpdateCompleted,
-  readUserForStart,
-  readUserForEdit,
-} from "./readUser.ts";
-import { updaterCompleted, updaterStarted } from "../data/editor.ts";
-import type { Project } from "../types/projects.ts";
-import { deleteProject } from "../utils/writers/deleter.ts";
-import {
-  getProjectsByCompleted,
-  getProjectsByStarted,
-} from "../utils/readers/filters.ts";
-import { exportCSVById, exportAllCSV } from "../utils/exporters/csv.ts";
-import { setup } from "../utils/writers/setup.ts";
-import { updateProject } from "../data/editor.ts";
-import pc from "picocolors";
-import { outro } from "@clack/prompts";
-import { generatePDF } from "../utils/exporters/pdf.ts";
+import { outro } from '@clack/prompts'
+import { Command } from 'commander'
+import pc from 'picocolors'
+import { updateProject, updaterCompleted, updaterStarted } from '../data/editor.ts'
+import type { Project } from '../types/projects.ts'
+import { exportAllCSV, exportCSVById } from '../utils/exporters/csv.ts'
+import { generatePDF } from '../utils/exporters/pdf.ts'
+import { getProjectsByCompleted, getProjectsByStarted } from '../utils/readers/filters.ts'
+import { getProjectById, getProjectByName } from '../utils/readers/finder'
+import { readAll } from '../utils/readers/readAll'
+import { creator } from '../utils/writers/creator'
+import { deleteProject } from '../utils/writers/deleter.ts'
+import { setup } from '../utils/writers/setup.ts'
+import { readUserForEdit, readUserForStart, readUserForUpdateCompleted } from './readUser.ts'
 
 export function cli(): void {
-  const program = new Command();
+  const program = new Command()
+
+  program.name('invoice').description('Manage your freelance projects elegantly').version('1.0.4')
 
   program
-    .name("invoice")
-    .description("Manage your freelance projects elegantly")
-    .version("1.0.3");
-
-  program
-    .command("setup")
-    .description("Start Invoice configuration")
+    .command('setup')
+    .description('Start Invoice configuration')
     .action(async (): Promise<void> => {
-      const [result, error] = await setup();
+      const [result, error] = await setup()
       if (result) {
-        console.log(pc.green("Logged in successfully! :)"));
+        console.log(pc.green('Logged in successfully! :)'))
       } else {
-        console.log(pc.red(`${error ? error : "Operation canceled"} :(`));
+        console.log(pc.red(`${error ? error : 'Operation canceled'} :(`))
       }
-    });
+    })
 
   program
-    .command("new")
-    .description("Create new project")
+    .command('new')
+    .description('Create new project')
     .action(async (): Promise<void> => {
-      await creator();
-    });
+      await creator()
+    })
 
   program
-    .command("list")
-    .description("List all projects")
-    .option("-j, --json", "Return json output")
+    .command('list')
+    .description('List all projects')
+    .option('-j, --json', 'Return json output')
     .action(async (option): Promise<void> => {
-      const projects = await readAll();
+      const projects = await readAll()
 
       if (projects) {
         if (option.json) {
-          console.log(JSON.stringify(projects, null, 2));
+          console.log(JSON.stringify(projects, null, 2))
         } else {
-          const Table = require("cli-table3");
+          const Table = require('cli-table3')
           const table = new Table({
-            head: ["id", "name", "started", "completed"],
+            head: ['id', 'name', 'started', 'completed'],
             style: {
               head: [],
-              border: ["white"],
+              border: ['white'],
             },
-          });
+          })
           projects?.forEach((p) => {
             table.push([
               pc.yellow(p.id),
               p.name,
               pc.yellow(p.projectStarted),
               pc.yellow(p.projectCompleted),
-            ]);
-          });
-          console.log(table.toString());
+            ])
+          })
+          console.log(table.toString())
         }
       } else {
-        console.error("No projects found!");
+        console.error('No projects found!')
       }
-    });
+    })
 
   program
-    .command("get")
-    .description("Get a specific project")
-    .option("-i --id <number>", "Search the project by ID")
-    .option("-n --name <name>", "Get project by name")
-    .option("-j, --json", "Return json output")
+    .command('get')
+    .description('Get a specific project')
+    .option('-i --id <number>', 'Search the project by ID')
+    .option('-n --name <name>', 'Get project by name')
+    .option('-j, --json', 'Return json output')
     .action(async (options): Promise<void> => {
       if (Object.keys(options).length === 0) {
-        console.warn(
-          pc.yellow(
-            "Please provide either --id <number> or --name <name> flag.",
-          ),
-        );
-        process.exit(1);
+        console.warn(pc.yellow('Please provide either --id <number> or --name <name> flag.'))
+        process.exit(1)
       }
 
       // By name
       if (options.name) {
-        const project: Project | null | undefined = await getProjectByName(
-          options.name,
-        );
+        const project: Project | null | undefined = await getProjectByName(options.name)
 
         if (project) {
           if (options.json) {
-            console.log(JSON.stringify(project, null, 2));
+            console.log(JSON.stringify(project, null, 2))
           } else {
-            console.table(project);
+            console.table(project)
           }
         } else {
-          console.error("Project not found");
+          console.error('Project not found')
         }
       }
 
       // By id
       if (options.id) {
-        const project: Project | null | undefined = await getProjectById(
-          Number(options.id),
-        );
+        const project: Project | null | undefined = await getProjectById(Number(options.id))
 
         if (project) {
           if (options.json) {
-            console.log(JSON.stringify(project, null, 2));
+            console.log(JSON.stringify(project, null, 2))
           } else {
-            console.table(project);
+            console.table(project)
           }
         } else {
-          console.error("Project not found");
+          console.error('Project not found')
         }
       }
-    });
+    })
 
   program
-    .command("start")
-    .description("Start existent project")
-    .option("-i --id <number>", "Get project by ID")
+    .command('start')
+    .description('Start existent project')
+    .option('-i --id <number>', 'Get project by ID')
     .action(async (options): Promise<void> => {
       if (Object.keys(options).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
-        process.exit(1);
+        console.warn(pc.yellow('Please provide either --id <number> flag.'))
+        process.exit(1)
       }
 
-      const projectID: number = Number(options.id);
-      const project: Project | null | undefined =
-        await getProjectById(projectID);
+      const projectID: number = Number(options.id)
+      const project: Project | null | undefined = await getProjectById(projectID)
       if (project) {
-        const currenStatus: boolean = !!project?.projectStarted;
-        const newState: boolean = await readUserForStart(currenStatus);
-        updaterStarted(projectID, newState);
+        const currenStatus: boolean = !!project?.projectStarted
+        const newState: boolean = await readUserForStart(currenStatus)
+        updaterStarted(projectID, newState)
       } else {
-        console.error("Project not found");
+        console.error('Project not found')
       }
-    });
+    })
 
   program
-    .command("done")
-    .description("Complete existent project")
-    .option("-i --id <number>", "Get project by ID")
+    .command('done')
+    .description('Complete existent project')
+    .option('-i --id <number>', 'Get project by ID')
     .action(async (option): Promise<void> => {
       if (Object.keys(option).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
-        process.exit(1);
+        console.warn(pc.yellow('Please provide either --id <number> flag.'))
+        process.exit(1)
       }
-      const projectId: number = Number(option.id);
-      const project: Project | null | undefined =
-        await getProjectById(projectId);
+      const projectId: number = Number(option.id)
+      const project: Project | null | undefined = await getProjectById(projectId)
       if (project) {
-        const currenStatus: boolean = !!project?.projectCompleted;
-        const newState: boolean =
-          await readUserForUpdateCompleted(currenStatus);
-        updaterCompleted(projectId, newState);
+        const currenStatus: boolean = !!project?.projectCompleted
+        const newState: boolean = await readUserForUpdateCompleted(currenStatus)
+        updaterCompleted(projectId, newState)
       } else {
-        console.error("Project not found");
+        console.error('Project not found')
       }
-    });
+    })
 
   program
-    .command("edit")
-    .description("Edit project information by id")
-    .option("-i --id <number>", "Get project by ID")
+    .command('edit')
+    .description('Edit project information by id')
+    .option('-i --id <number>', 'Get project by ID')
     .action(async (option) => {
       if (Object.keys(option).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
-        process.exit(1);
+        console.warn(pc.yellow('Please provide either --id <number> flag.'))
+        process.exit(1)
       }
 
       try {
-        const projectId: number = Number(option.id);
-        const newData = await readUserForEdit();
-        const { data, value } = newData;
+        const projectId: number = Number(option.id)
+        const newData = await readUserForEdit()
+        const { data, value } = newData
 
-        updateProject(projectId, { [data]: value });
-        outro(pc.green("Project updated successfully!"));
+        updateProject(projectId, { [data]: value })
+        outro(pc.green('Project updated successfully!'))
       } catch (error) {
-        console.error(`${error}`);
+        console.error(`${error}`)
         process.exit(1)
       }
-    });
+    })
 
   program
-    .command("filter")
-    .description("Filter projects by condition")
-    .option("-s --started", "Filter started projects")
-    .option("-c --completed", "Filter completed projects")
-    .option("-j, --json", "Return json output")
+    .command('filter')
+    .description('Filter projects by condition')
+    .option('-s --started', 'Filter started projects')
+    .option('-c --completed', 'Filter completed projects')
+    .option('-j, --json', 'Return json output')
     .action(async (options): Promise<void> => {
       if (Object.keys(options).length === 0) {
-        console.warn(
-          pc.yellow("Please provide either --started or --completed flag.")
-        );
+        console.warn(pc.yellow('Please provide either --started or --completed flag.'))
         process.exit(1)
       }
-      const Table = require("cli-table3");
+      const Table = require('cli-table3')
       const table = new Table({
-        head: ["id", "name", "description"],
+        head: ['id', 'name', 'description'],
         style: {
           head: [],
-          border: ["white"],
+          border: ['white'],
         },
-      });
+      })
 
       if (options.started) {
-        const projects = getProjectsByStarted();
+        const projects = getProjectsByStarted()
         if (projects && projects.length > 0) {
           if (options.json) {
-            console.log(JSON.stringify(projects, null, 2));
+            console.log(JSON.stringify(projects, null, 2))
           } else {
             projects?.forEach((p) => {
-              table.push([pc.yellow(p.id), p.name, p.description]);
-            });
-            console.log(table.toString());
+              table.push([pc.yellow(p.id), p.name, p.description])
+            })
+            console.log(table.toString())
           }
         } else {
-          console.error("No projects found!");
+          console.error('No projects found!')
         }
       }
 
       if (options.completed) {
-        const projects = getProjectsByCompleted();
+        const projects = getProjectsByCompleted()
         if (projects && projects.length > 0) {
           if (options.json) {
-            console.log(JSON.stringify(projects, null, 2));
+            console.log(JSON.stringify(projects, null, 2))
           } else {
             projects?.forEach((p) => {
-              table.push([pc.yellow(p.id), p.name, p.description]);
-            });
-            console.log(table.toString());
+              table.push([pc.yellow(p.id), p.name, p.description])
+            })
+            console.log(table.toString())
           }
         } else {
-          console.error("No projects found!");
+          console.error('No projects found!')
         }
       }
-    });
+    })
 
   program
-    .command("delete")
-    .description("Delete project")
-    .option("-i, --id <number>", "delete project by id")
+    .command('delete')
+    .description('Delete project')
+    .option('-i, --id <number>', 'delete project by id')
     .action(async (options): Promise<void> => {
       if (Object.keys(options).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
-        process.exit(1);
+        console.warn(pc.yellow('Please provide either --id <number> flag.'))
+        process.exit(1)
       }
       if (options.id) {
-        const projectID = Number(options.id);
-        await deleteProject(projectID);
+        const projectID = Number(options.id)
+        await deleteProject(projectID)
       }
-    });
+    })
 
   program
-    .command("generate")
-    .description("Generates an invoice for a project")
-    .option("-i, --id <number>", "Export project by id")
-    .argument(
-      "[path]",
-      "File path output (default is invoice.pdf)",
-      "invoice.pdf",
-    )
+    .command('generate')
+    .description('Generates an invoice for a project')
+    .option('-i, --id <number>', 'Export project by id')
+    .argument('[path]', 'File path output (default is invoice.pdf)', 'invoice.pdf')
     .action(async (path, options): Promise<void> => {
       if (Object.keys(options).length === 0) {
-        console.warn(pc.yellow("Please provide either --id <number> flag."));
-        process.exit(1);
+        console.warn(pc.yellow('Please provide either --id <number> flag.'))
+        process.exit(1)
       }
       if (options.id) {
-        const projectId = Number(options.id);
-        await generatePDF(projectId, path);
-        console.log(pc.green(`Project ${projectId} exported to ${path}`));
+        const projectId = Number(options.id)
+        await generatePDF(projectId, path)
+        console.log(pc.green(`Project ${projectId} exported to ${path}`))
       }
-    });
+    })
 
   program
-    .command("export")
-    .description("Export project to CSV")
-    .option("-a, --all", "Export all projects")
-    .option("-i, --id <number>", "Export project by id")
-    .argument(
-      "[path]",
-      "File path output (default is output.csv)",
-      "output.csv",
-    )
+    .command('export')
+    .description('Export project to CSV')
+    .option('-a, --all', 'Export all projects')
+    .option('-i, --id <number>', 'Export project by id')
+    .argument('[path]', 'File path output (default is output.csv)', 'output.csv')
     .action(async (path, options): Promise<void> => {
       if (Object.keys(options).length === 0) {
-        console.warn(
-          pc.yellow("Please provide either --id <number> or --all flag."),
-        );
-        process.exit(1);
+        console.warn(pc.yellow('Please provide either --id <number> or --all flag.'))
+        process.exit(1)
       }
       if (options.id) {
-        const projectId = Number(options.id);
-        await exportCSVById(projectId, path);
-        console.log(pc.green(`Project ${projectId} exported to ${path}`));
+        const projectId = Number(options.id)
+        await exportCSVById(projectId, path)
+        console.log(pc.green(`Project ${projectId} exported to ${path}`))
       }
 
       if (options.all) {
-        await exportAllCSV(path);
-        console.log(pc.green(`All projects were exported to ${path}`));
+        await exportAllCSV(path)
+        console.log(pc.green(`All projects were exported to ${path}`))
       }
-    });
+    })
 
-  program.parse();
+  program.parse()
 }
