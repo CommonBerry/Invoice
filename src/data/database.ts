@@ -9,8 +9,7 @@ export const prepareDB = (dir: string, path: string) => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true })
     }
-    const db = new Database(path, { create: true })
-    return db
+    return new Database(path, { create: true })
   } catch (error) {
     console.error(`${error}`)
     process.exit(1)
